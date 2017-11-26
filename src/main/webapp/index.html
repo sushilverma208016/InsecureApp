@@ -193,12 +193,12 @@
                 }
             };
             console.log("start");
-            var url = "/api/message/transfer";
-            var type = "POST"; 
+            var type = "GET"; 
             var fromAccountId = document.getElementById("personid");
             var fromAccount = fromAccountId.textContent || fromAccountId.innerText;
             var toAccount = document.getElementById("accounttotransfer").value;
             var amount = document.getElementById("moneytotransfer").value;
+            var url = "/api/message/transfer"+"/"+ fromAccount + "/" + toAccount + "/" + amount;
             var params = {
                 fromAccount: fromAccount, 
                 toAccount: toAccount,
@@ -207,8 +207,8 @@
             };
             console.log(params);
             xhttp.open(type, url, true);
-            xhttp.setRequestHeader("Content-type", "application/json");
-            xhttp.send(JSON.stringify(params));
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send();
             console.log("done");
         }
 
