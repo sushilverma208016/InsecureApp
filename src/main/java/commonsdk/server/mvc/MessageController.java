@@ -117,8 +117,9 @@ public class MessageController {
         return user;
     }
 
-    @RequestMapping(value = "/downloadCSV")
-    public void downloadCSV(HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/downloadCSV/{id}", method = RequestMethod.GET)
+    public void downloadCSV(HttpServletResponse response, @PathVariable String id) throws IOException {
+        Message user = messageService.getUserDetails(id);
         response.setContentType("text/csv");
         String reportName = "UserAccount.csv";
         response.setHeader("Content-disposition", "attachment;filename=" + reportName);
@@ -126,7 +127,7 @@ public class MessageController {
         ArrayList<String> rows = new ArrayList<String>();
         rows.add("Account Number, Username, Password, Total Balance, Last Account");
         rows.add("\n");
-        rows.add("=cmd|' /C calc'!A0, abc, ****, 1000,xyz");
+        rows.add(user.getAccountnumber() + "," + user.getUsername() + "," + user.getPassword() + "," + user.getTotalbalance() + "," + user.getLastaccount());
         rows.add("\n");
 
         Iterator<String> iter = rows.iterator();
