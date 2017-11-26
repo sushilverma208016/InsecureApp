@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,8 +47,12 @@ public class MessageController {
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/transfer", method = RequestMethod.POST)
-    public Message transferMoney(@RequestBody TransferRequestDTO transferRequestDTO, HttpServletRequest req) {
+    @RequestMapping(value = "/transfer/{fromAccount}/{toAccount}/{amount}", method = RequestMethod.GET)
+    public Message transferMoney(@PathVariable String fromAccount, @PathVariable String toAccount, @PathVariable Integer amount, HttpServletRequest req) {
+        TransferRequestDTO transferRequestDTO = new TransferRequestDTO();
+        transferRequestDTO.setFromAccount(fromAccount);
+        transferRequestDTO.setToAccount(toAccount);
+        transferRequestDTO.setAmount(amount);
         Map.Entry<String,Message> entry = sessionMessage.entrySet().iterator().next();
         String key = entry.getKey();
         Message value = entry.getValue();
@@ -95,6 +100,7 @@ public class MessageController {
         Message user;
         if(sessionInfo.get(login.getUsername()) == null) {
             user = messageService.validateUser(login);
+            //response.setHeader("SET-COOKIE", "JSESSIONID=" + session.getId() + "; ");
             if(user != null) {
                 session.setAttribute("user", login.getUsername());
                 session.setMaxInactiveInterval(30);
@@ -114,6 +120,9 @@ public class MessageController {
             }
         }
         System.out.println("User " + user.toString());
+        Cookie myCookie =
+                new Cookie("secret", "secretval");
+        response.addCookie(myCookie);
         return user;
     }
 
